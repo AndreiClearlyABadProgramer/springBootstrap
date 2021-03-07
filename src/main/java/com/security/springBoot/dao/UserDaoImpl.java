@@ -16,8 +16,14 @@ public class UserDaoImpl implements UserDao {
     private EntityManager entityManager;
 
     @Override
+    public User getUserByEmail(String email) {
+        User user = entityManager.createQuery("select user from User user join fetch user.roles where user.email = :userEmail", User.class).setParameter("userEmail", email).getSingleResult();
+        return user;
+    }
+
+    @Override
     public User getUserByName(String name) {
-        User user = entityManager.createQuery("select user from User user where user.name = :username", User.class).setParameter("username", name).getSingleResult();
+        User user = entityManager.createQuery("select user from User user join fetch user.roles where user.name = :username", User.class).setParameter("username", name).getSingleResult();
         return user;
     }
 
@@ -35,13 +41,14 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void updateUser(User user) {
+        user.setId(user.getId());
         entityManager.merge(user);
     }
 
     @Override
     public List<User> userList() {
         try {
-            List<User> users = entityManager.createQuery("select user from User user").getResultList();
+            List<User> users = entityManager.createQuery("select distinct user from User user join fetch user.roles").getResultList();
             return users;
         }catch (NullPointerException e) {
             return new ArrayList<>();

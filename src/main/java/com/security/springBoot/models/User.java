@@ -1,6 +1,5 @@
 package com.security.springBoot.models;
 
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,14 +12,20 @@ import java.util.Set;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
     @Column(name = "username")
-    private String name; // уникальное значение
+    private String name;
+    @Column(name = "lastname")
+    private String lastName;
+    @Column(name = "age")
+    private Byte age;
+    @Column(name = "email")
+    private String email;
     @Column(name = "password")
     private String password;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles",
     joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -30,8 +35,11 @@ public class User implements UserDetails {
 
    }
 
-    public User(String name, String password, Set<Role> roles) {
+    public User(String name, String lastName, Byte age, String email, String password, Set<Role> roles) {
         this.name = name;
+        this.lastName = lastName;
+        this.age = age;
+        this.email = email;
         this.password = password;
         this.roles = roles;
     }
@@ -92,12 +100,45 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Byte getAge() {
+        return age;
+    }
+
+    public void setAge(Byte age) {
+        this.age = age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }
 
     public void setRoles(Set<Role> roles) {
        this.roles = roles;
+    }
+
+    public String roleGetter() {
+       StringBuilder sb = new StringBuilder();
+       for(Role i : roles) {
+           sb.append(i.toString().replaceAll("ROLE_", ""));
+           sb.append(" ");
+       }
+       return sb.toString();
     }
 
     @Override
