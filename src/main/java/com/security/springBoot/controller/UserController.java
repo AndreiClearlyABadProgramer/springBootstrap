@@ -13,33 +13,28 @@ import com.security.springBoot.models.User;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping(value = "/")
 public class UserController {
 
 	private long id;
 
-	@Qualifier("userDetailsServiceImpl")
-	@Autowired
-	final private UserDetailsService service;
 	@Autowired
 	private final UserService userService;
 
-	public UserController(@Qualifier("userDetailsServiceImpl") UserDetailsService service, UserService userService) {
-		this.service = service;
+	public UserController(UserService userService) {
 		this.userService = userService;
 	}
 
 
-	@GetMapping("user")
+	@RequestMapping(value = "user", method = RequestMethod.GET)
 	public String userPage(Principal principal,  Model model){
 		model.addAttribute("user", userService.getUserByName(principal.getName()));
 		return "user";
 	}
 
-	@GetMapping("admin")
+	@RequestMapping(value = "admin", method = RequestMethod.GET)
 	public String adminPage(Model model, Principal principal){
 		model.addAttribute("user", new User());
 		model.addAttribute("admin", userService.getUserByName(principal.getName()));
@@ -51,18 +46,18 @@ public class UserController {
 		return "admin";
 	}
 
-	@PostMapping("/admin")
+	@RequestMapping(value = "/admin", method = RequestMethod.POST)
 	public String create(@ModelAttribute("user") User user){
 		userService.addUser(user);
 		return "redirect:/admin";
 	}
 
-	@GetMapping(value = "/logout")
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(){
 		return "logout";
 	}
 
-	@PostMapping("logout")
+	@RequestMapping(value = "logout", method = RequestMethod.POST)
 	public String logoutURL(){
 		return "redirect:/logout";
 	}
@@ -90,7 +85,7 @@ public class UserController {
 		return "redirect:/admin";
 	}
 
-    @GetMapping(value = "/login")
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String loginPage() {
         return "login";
     }
