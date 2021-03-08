@@ -17,14 +17,12 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserByEmail(String email) {
-        User user = entityManager.createQuery("select user from User user join fetch user.roles where user.email = :userEmail", User.class).setParameter("userEmail", email).getSingleResult();
-        return user;
+        return entityManager.createQuery("select user from User user join fetch user.roles where user.email = :userEmail", User.class).setParameter("userEmail", email).getSingleResult();;
     }
 
     @Override
-    public User getUserByName(String name) {
-        User user = entityManager.createQuery("select user from User user join fetch user.roles where user.name = :username", User.class).setParameter("username", name).getSingleResult();
-        return user;
+    public User getUserByName(String name) { 
+        return entityManager.createQuery("select user from User user join fetch user.roles where user.name = :username", User.class).setParameter("username", name).getSingleResult();;
     }
 
     @Override
@@ -41,7 +39,6 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void updateUser(User user) {
-        user.setId(user.getId());
         entityManager.merge(user);
     }
 
